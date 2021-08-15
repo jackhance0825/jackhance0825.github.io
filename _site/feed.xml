@@ -1,1 +1,143 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US"><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en-US" /><updated>2021-05-12T21:01:28+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">jackhance’s blog</title><subtitle>Just Be Yourself  !   Trust Yourself  !   Love Yourself !</subtitle><author><name>jackhance</name><email>jackhance0825@163.com</email></author></feed>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US"><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en-US" /><updated>2021-08-15T16:55:28+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">jackhance’s blog</title><subtitle>Just Be Yourself  !   Trust Yourself  !   Love Yourself !</subtitle><author><name>jackhance</name><email>jackhance0825@163.com</email></author><entry><title type="html">Spring 卷 - IOC 篇 - IOC 的前世今生</title><link href="http://localhost:4000/spring-ioc-what-is-ioc/" rel="alternate" type="text/html" title="Spring 卷 - IOC 篇 - IOC 的前世今生" /><published>2021-08-15T10:37:47+08:00</published><updated>2021-08-15T10:37:47+08:00</updated><id>http://localhost:4000/spring-ioc-what-is-ioc</id><content type="html" xml:base="http://localhost:4000/spring-ioc-what-is-ioc/">&lt;h4 id=&quot;ioc-到底是什么&quot;&gt;IOC 到底是什么&lt;/h4&gt;
+
+&lt;p&gt;In software engineering, inversion of control (IoC) is a programming principle. IoC inverts the flow of control as compared to traditional control flow. In IoC, custom-written portions of a computer program receive the flow of control from a generic framework. A software architecture with this design inverts control as compared to traditional procedural programming: in traditional programming, the custom code that expresses the purpose of the program calls into reusable libraries to take care of generic tasks, but with inversion of control, it is the framework that calls into the custom, or task-specific, code.&lt;/p&gt;
+
+&lt;p&gt;———— &lt;a href=&quot;https://en.wikipedia.org/wiki/Inversion_of_control&quot; target=&quot;_blank&quot;&gt;维基百科&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;IOC（inversion of control） 翻译过来是，控制反转。&lt;/p&gt;
+
+&lt;p&gt;在传统的编程中，业务逻辑流是被对象确定的静态绑定到彼此的，从而缺乏了灵活性。&lt;/p&gt;
+
+&lt;p&gt;通过控制反转，流程取决于在程序执行期间建立的对象图。通过抽象定义的对象交互使动态的业务流成为可能。运行时绑定可通过依赖注入（dependence injection）或服务定位器（service locator）等机制实现。代码可在编译期间静态链接，是通过从外部配置读取其描述，而不是直接引用代码本身来找到要执行的代码。&lt;/p&gt;
+
+&lt;p&gt;控制反转用于增加程序的模块化并使其方便扩展，并在面向对象编程和其他编程范式中得到应用。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;ioc-的足迹&quot;&gt;IOC 的足迹&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;1983年，Richard E. Sweet 在《The Mesa Programming Environment》中提出“Hollywood
+Principle”（好莱坞原则）Don‘t call us, we’ll call you. &lt;sup id=&quot;hollywood-principle&quot;&gt;&lt;a href=&quot;#hollywood-principle-ref&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+  &lt;li&gt;1988年，Ralph E. Johnson &amp;amp; Brian Foote 在《Designing Reusable Classes》中提出“Inversion
+of control”（控制反转）&lt;sup id=&quot;inversion-of-control&quot;&gt;&lt;a href=&quot;#inversion-of-control-ref&quot;&gt;[2]&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+  &lt;li&gt;1996年，Michael Mattsson 在《Object-Oriented Frameworks, A survey of methodological
+issues》中将“Inversion of control”命名为 “Hollywood principle”&lt;/li&gt;
+  &lt;li&gt;2004年，Martin Fowler 在《Inversion of Control Containers and the Dependency Injection
+pattern》中提出了自己对 IoC 以及 DI 的理解 &lt;sup id=&quot;inversion-of-control-DI&quot;&gt;&lt;a href=&quot;#inversion-of-control-DI-ref&quot;&gt;[3]&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+  &lt;li&gt;2005年，Martin Fowler 在 《InversionOfControl》对 IoC 做出进一步的说明 &lt;sup id=&quot;inversion-of-control-more&quot;&gt;&lt;a href=&quot;#inversion-of-control-more-ref&quot;&gt;[4]&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;ioc-的实现策略&quot;&gt;IOC 的实现策略&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用服务定位器模式&lt;/li&gt;
+  &lt;li&gt;依赖注入
+    &lt;ul&gt;
+      &lt;li&gt;构造函数注入&lt;/li&gt;
+      &lt;li&gt;参数注入&lt;/li&gt;
+      &lt;li&gt;setter方法注入&lt;/li&gt;
+      &lt;li&gt;接口注入&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;上下文查找&lt;/li&gt;
+  &lt;li&gt;模板方法设计模式&lt;/li&gt;
+  &lt;li&gt;策略设计模式&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;ioc-容器到底是什么&quot;&gt;IOC 容器到底是什么&lt;/h4&gt;
+
+&lt;p&gt;《Expert One-on-One™ J2EE™ Development without EJB™》提到关于轻量级容器的特征：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;可以管理应用程序代码的容器。&lt;/li&gt;
+  &lt;li&gt;一个快速启动的容器。&lt;/li&gt;
+  &lt;li&gt;不需要任何特殊部署步骤即可在其中部署对象的容器。&lt;/li&gt;
+  &lt;li&gt;一个具有如此轻量级和最小 API 依赖性的容器，它可以在各种环境中运行。&lt;/li&gt;
+  &lt;li&gt;在部署工作量和性能方面为添加托管对象设置了如此低的标准的容器，可以部署和管理细粒度对象以及粗粒度组件的开销。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;《Expert One-on-One™ J2EE™ Development without EJB™》提到关于轻量级容器的好处：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;逃离单体容器的约束&lt;/li&gt;
+  &lt;li&gt;最大化代码可重用性&lt;/li&gt;
+  &lt;li&gt;更多的面向对象&lt;/li&gt;
+  &lt;li&gt;更高的生产力&lt;/li&gt;
+  &lt;li&gt;更好的可测试性&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;因此，我们所期待的 IOC 容器应该具备以上的特征。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;ioc-容器职责&quot;&gt;IOC 容器职责&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;依赖处理
+    &lt;ul&gt;
+      &lt;li&gt;依赖查找&lt;/li&gt;
+      &lt;li&gt;依赖注入&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;生命周期管理
+    &lt;ul&gt;
+      &lt;li&gt;容器&lt;/li&gt;
+      &lt;li&gt;托管的资源（如Java Beans）&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;配置
+    &lt;ul&gt;
+      &lt;li&gt;容器&lt;/li&gt;
+      &lt;li&gt;外部化配置&lt;/li&gt;
+      &lt;li&gt;托管的资源（如Java Beans）&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;ioc-容器实现&quot;&gt;IOC 容器实现&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Java SE
+    &lt;ul&gt;
+      &lt;li&gt;Java Beans： JavaBeans&lt;sup id=&quot;java-beans&quot;&gt;&lt;a href=&quot;#java-beans-ref&quot;&gt;[5]&lt;/a&gt;&lt;/sup&gt; BeanContext&lt;sup id=&quot;bean-context&quot;&gt;&lt;a href=&quot;#bean-context-ref&quot;&gt;[6]&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+      &lt;li&gt;Java ServiceLoader SPI&lt;/li&gt;
+      &lt;li&gt;JNDI&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Java EE
+    &lt;ul&gt;
+      &lt;li&gt;EJB&lt;/li&gt;
+      &lt;li&gt;Servlet&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;开源框架
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;http://avalon.apache.org/closed.html&quot; target=&quot;_blank&quot;&gt;Apache Avalon&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;http://picocontainer.com/&quot; target=&quot;_blank&quot;&gt;PicoContainer&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://github.com/google/guice&quot; target=&quot;_blank&quot;&gt;Google Guice&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://spring.io/projects/spring-framework&quot; target=&quot;_blank&quot;&gt;Spring Framework&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;小记&quot;&gt;小记&lt;/h4&gt;
+
+&lt;p&gt;&lt;small id=&quot;hollywood-principle-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#hollywood-principle&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;https://www.digibarn.com/friends/curbow/star/XDEPaper.pdf&quot; target=&quot;_blank&quot;&gt;《The Mesa Programming Environment》&lt;/a&gt;&lt;/small&gt; Don‘t call us, we’ll call you ：  us 指的是所需的资源，you 指的是系统或者模块&lt;/p&gt;
+
+&lt;p&gt;&lt;small id=&quot;inversion-of-control-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#inversion-of-control&quot;&gt;[2]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;http://www.laputan.org/drc.html&quot; target=&quot;_blank&quot;&gt;《Designing Reusable Classes》&lt;/a&gt;&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;small id=&quot;inversion-of-control-DI-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#inversion-of-control-DI&quot;&gt;[3]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;https://martinfowler.com/articles/injection.html&quot; target=&quot;_blank&quot;&gt;《Inversion of Control Containers and the Dependency Injection
+pattern》&lt;/a&gt;&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;small id=&quot;inversion-of-control-more-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#inversion-of-control-more&quot;&gt;[4]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;https://martinfowler.com/bliki/InversionOfControl.html&quot; target=&quot;_blank&quot;&gt;《InversionOfControl》&lt;/a&gt;&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;small id=&quot;java-beans-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#java-beans&quot;&gt;[5]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;https://www.oracle.com/technetwork/java/javase/tech/index-jsp-138795.html&quot; target=&quot;_blank&quot;&gt;JavaBeans 规范&lt;/a&gt;&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;small id=&quot;bean-context-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#bean-context&quot;&gt;[6]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;https://docs.oracle.com/javase/8/docs/technotes/guides/beans/spec/beancontext.html&quot; target=&quot;_blank&quot;&gt;BeanContext 规范&lt;/a&gt;&lt;/small&gt;&lt;/p&gt;</content><author><name>jackhance</name><email>jackhance0825@163.com</email></author><category term="java" /><category term="spring" /><category term="ioc" /><summary type="html">IOC 到底是什么</summary></entry></feed>
