@@ -63,6 +63,7 @@ pattern》中提出了自己对 IoC 以及 DI 的理解 <sup id="inversion-of-co
 - 一个具有如此轻量级和最小 API 依赖性的容器，它可以在各种环境中运行。
 - 在部署工作量和性能方面为添加托管对象设置了如此低的标准的容器，可以部署和管理细粒度对象以及粗粒度组件的开销。
 
+
 《Expert One-on-One™ J2EE™ Development without EJB™》提到关于轻量级容器的好处：
 - 逃离单体容器的约束
 - 最大化代码可重用性
