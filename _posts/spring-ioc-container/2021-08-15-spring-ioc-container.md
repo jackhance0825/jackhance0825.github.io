@@ -26,14 +26,12 @@ description: Spring IOC 容器概述
     ```
     实时查找，IOC 容器会返回托管在容器内部的实例对象。
     2. 延迟查找
-    示例配置：
     ```xml
         <!-- FactoryBean 的方式定义bean -->
         <bean id="myServiceFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
             <property name="targetBeanName" value="worker"/>
         </bean>
     ```
-    示例代码：
     ```java
         ObjectFactory<Worker> myServiceFactory = (ObjectFactory<Worker>) beanFactory.getBean("myServiceFactory");
         worker = myServiceFactory.getObject();
