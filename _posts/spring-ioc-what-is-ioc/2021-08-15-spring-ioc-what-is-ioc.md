@@ -3,7 +3,7 @@ title: Spring 卷 - IOC 篇 - IOC 的前世今生
 date: 2021-08-15 09:37:47 +07:00
 modified: 2021-08-15 09:37:47 +07:00
 tags: [java, spring, ioc]
-description: 重新踏上 IOC 的旅途，回顾 TA 的前世今生
+description: 描述 IOC 的来龙去脉
 ---
 
 
