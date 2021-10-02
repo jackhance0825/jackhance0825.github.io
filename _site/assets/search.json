@@ -1,6 +1,13 @@
 [
   
     {
+      "title"    : "Spring 卷 - IOC 篇 - Spring Bean",
+      "tags"     : "java, spring, ioc, bean",
+      "url"      : "/spring-bean/",
+      "date"     : "2021-09-25 15:59:00 +0800"
+    } ,
+  
+    {
       "title"    : "Spring 卷 - IOC 篇 - Spring IOC 容器",
       "tags"     : "java, spring, ioc",
       "url"      : "/spring-ioc-container/",

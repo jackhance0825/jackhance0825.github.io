@@ -11,108 +11,112 @@ description: Spring IOC 容器概述
 
 主动或手动的依赖查找方式，需要依赖容器或标准API实现。
 
-1. 根据 Bean 名称查找
-    1. 实时查找
-    ```xml
-        <bean id="worker" class="com.jackhance.spring.ioc.container.model.Worker">
-            <property name="id" value="9527"/>
-            <property name="name" value="jackhance"/>
-            <property name="age" value="25"/>
-        </bean>
-    ```
-    ```java
-        Worker worker = (Worker) beanFactory.getBean("worker");
-        System.out.println("实时依赖查找：" + worker);
-    ```
-    实时查找，IOC 容器会返回托管在容器内部的实例对象。
-    2. 延迟查找
-    ```xml
-        <!-- FactoryBean 的方式定义bean -->
-        <bean id="myServiceFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
-            <property name="targetBeanName" value="worker"/>
-        </bean>
-    ```
-    ```java
-        ObjectFactory<Worker> myServiceFactory = (ObjectFactory<Worker>) beanFactory.getBean("myServiceFactory");
-        worker = myServiceFactory.getObject();
-        System.out.println("ObjectFactory 延时依赖查找：" + worker);
-    ```
-    延迟查找，可以通过对象工厂 FactoryBean 的方式来创建 Bean ,在调用 `ObjectFactory # getObject` 时，才进行对象创建。
-2. 根据 Bean 类型查找
-    1. 单个 Bean 对象
-    ```java
-        Worker worker = beanFactory.getBean(Worker.class);
-        System.out.println("根据类型查找单个：" + worker);
-    ```
-    2. 集合 Bean 对象
-    ```java
-        if (beanFactory instanceof ListableBeanFactory) {
-            ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
-            Map<String, Worker> workers = listableBeanFactory.getBeansOfType(Worker.class);
-            System.out.println("根据类型查找多个Bean对象：" + workers);
+##### 根据 Bean 名称查找
+1. 实时查找
+```xml
+    <bean id="worker" class="com.jackhance.spring.ioc.container.model.Worker">
+        <property name="id" value="9527"/>
+        <property name="name" value="jackhance"/>
+        <property name="age" value="25"/>
+    </bean>
+```
+```java
+    Worker worker = (Worker) beanFactory.getBean("worker");
+    System.out.println("实时依赖查找：" + worker);
+```
+实时查找，IOC 容器会返回托管在容器内部的实例对象。
+2. 延迟查找
+```xml
+    <!-- FactoryBean 的方式定义bean -->
+    <bean id="myServiceFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+        <property name="targetBeanName" value="worker"/>
+    </bean>
+```
+```java
+    ObjectFactory<Worker> myServiceFactory = (ObjectFactory<Worker>) beanFactory.getBean("myServiceFactory");
+    worker = myServiceFactory.getObject();
+    System.out.println("ObjectFactory 延时依赖查找：" + worker);
+```
+延迟查找，可以通过对象工厂 FactoryBean 的方式来创建 Bean ,在调用 `ObjectFactory # getObject` 时，才进行对象创建。
+
+##### 根据 Bean 类型查找
+1. 单个 Bean 对象
+```java
+    Worker worker = beanFactory.getBean(Worker.class);
+    System.out.println("根据类型查找单个：" + worker);
+```
+2. 集合 Bean 对象
+```java
+    if (beanFactory instanceof ListableBeanFactory) {
+        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
+        Map<String, Worker> workers = listableBeanFactory.getBeansOfType(Worker.class);
+        System.out.println("根据类型查找多个Bean对象：" + workers);
+    }
+```
+
+##### 根据 Bean 名称 + 类型查找
+1. 根据 Java 注解查找
+```java
+        /**
+        * 标注高级
+        *
+        * @author jackhance
+        * @mail jackhance0825@163.com
+        */
+        @Target({ElementType.TYPE})
+        @Retention(RetentionPolicy.RUNTIME)
+        public @interface Advanced {
         }
-    ```
-3. 根据 Bean 名称 + 类型查找
-    1. 根据 Java 注解查找
-    ```java
-            /**
-            * 标注高级
-            *
-            * @author jackhance
-            * @mail jackhance0825@163.com
-            */
-            @Target({ElementType.TYPE})
-            @Retention(RetentionPolicy.RUNTIME)
-            public @interface Advanced {
+
+        /**
+        * 新生代工人
+        *
+        * @author jackhance
+        * @mail jackhance0825@163.com
+        */
+        @Advanced
+        public class AdvancedWorker extends Worker{
+            private String hobby;
+
+            public String getHobby() {
+                return hobby;
             }
 
-            /**
-            * 新生代工人
-            *
-            * @author jackhance
-            * @mail jackhance0825@163.com
-            */
-            @Advanced
-            public class AdvancedWorker extends Worker{
-                private String hobby;
-
-                public String getHobby() {
-                    return hobby;
-                }
-
-                public void setHobby(String hobby) {
-                    this.hobby = hobby;
-                }
-
-                @Override
-                public String toString() {
-                    return "AdvancedWorker{" +
-                            "hobby='" + hobby + '\'' +
-                            "} " + super.toString();
-                }
+            public void setHobby(String hobby) {
+                this.hobby = hobby;
             }
-    ```
-    ```java
-        if (beanFactory instanceof ListableBeanFactory) {
-            ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
-            Map<String, Worker> workers = (Map) listableBeanFactory.getBeansWithAnnotation(Advanced.class);
-            System.out.println("根据注解查找多个Bean对象：" + workers);
-        }
-    ```
-    2. 单个 Bean 对象
-    ```java
-        Worker worker = beanFactory.getBean(Worker.class);
-        System.out.println("根据类型查找单个：" + worker);
-    ```
-    3. 集合 Bean 对象
-    ```java
-        if (beanFactory instanceof ListableBeanFactory) {
-            ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
-            Map<String, Worker> workers = listableBeanFactory.getBeansOfType(Worker.class);
-            System.out.println("根据类型查找多个Bean对象：" + workers);
-        }
-    ```
 
+            @Override
+            public String toString() {
+                return "AdvancedWorker{" +
+                        "hobby='" + hobby + '\'' +
+                        "} " + super.toString();
+            }
+        }
+
+    //...
+
+    if (beanFactory instanceof ListableBeanFactory) {
+        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
+        Map<String, Worker> workers = (Map) listableBeanFactory.getBeansWithAnnotation(Advanced.class);
+        System.out.println("根据注解查找多个Bean对象：" + workers);
+    }
+```
+2. 单个 Bean 对象
+```java
+    Worker worker = beanFactory.getBean(Worker.class);
+    System.out.println("根据类型查找单个：" + worker);
+```
+3. 集合 Bean 对象
+```java
+    if (beanFactory instanceof ListableBeanFactory) {
+        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
+        Map<String, Worker> workers = listableBeanFactory.getBeansOfType(Worker.class);
+        System.out.println("根据类型查找多个Bean对象：" + workers);
+    }
+```
+
+<br>
 <hr>
 
 #### Spring IOC 依赖注入
@@ -143,7 +147,7 @@ description: Spring IOC 容器概述
         }
 ```
 
-1. 根据 Bean 名称注入
+##### 根据 Bean 名称注入
 ```xml
     <bean id="workerGroup" class="com.jackhance.spring.ioc.container.model.WorkerGroup" autowire="no">
 
@@ -155,61 +159,76 @@ description: Spring IOC 容器概述
        </property>
     </bean>
 ```
-2. 根据 Bean 类型注入
+
+
+##### 根据 Bean 类型注入
 ```xml
     <bean id="workerGroup" class="com.jackhance.spring.ioc.container.model.WorkerGroup" autowire="byType"> <!-- 通过类型依赖注入 -->
     </bean>
 ```
 单个 Bean 对象 : `WorkerGroup # worker`
 集合 Bean 对象 : `WorkerGroup # workerCollection`
-3. 注入容器內建 Bean 对象
+
+
+##### 注入容器內建 Bean 对象
 `WorkerGroup # environment`
 `WorkerGroup # beanFactoryObjectFactory`
-4. 注入非 Bean 对象
-`WorkerGroup # beanFactory`
-5. 注入类型
-    1. 实时注入: 在执行依赖注入前，对象已创建完毕
-    2. 延迟注入：依赖注入对象工厂，在通过对象工厂获取对象时，才进行对象的实例化
-    `WorkerGroup # beanFactoryObjectFactory`
 
+
+##### 注入非 Bean 对象
+`WorkerGroup # beanFactory`
+
+##### 注入类型
+1. 实时注入: 在执行依赖注入前，对象已创建完毕
+2. 延迟注入：依赖注入对象工厂，在通过对象工厂获取对象时，才进行对象的实例化
+`WorkerGroup # beanFactoryObjectFactory`
+
+<br>
 <hr>
 
 #### Spring IOC 依赖来源
 
-1. 自定义 Bean
+##### 自定义 Bean
 ```java
         WorkerGroup workerGroup = beanFactory.getBean("workerGroup", WorkerGroup.class);
         System.out.println("[依赖来源]自定义 Bean : " + workerGroup);
 ```
-2. 内建依赖 Bean
+
+
+##### 内建依赖 Bean
 ```java
         ObjectFactory<BeanFactory> beanFactoryObjectFactory = workerGroup.getBeanFactoryObjectFactory();
         BeanFactory beanFactory0 = beanFactoryObjectFactory.getObject();
         System.out.println("[依赖来源]内建依赖 Bean : " + beanFactoryObjectFactory);
 ```
-3. 容器內建 Bean
+
+
+##### 容器內建 Bean
 ```java
         Environment env = workerGroup.getEnvironment();
         System.out.println("[依赖来源]容器內建 Bean : " + env);
 ```
 
+<br>
 <hr>
 
 #### Spring IOC 配置元信息
 
-1. Bean 定义配置
-    1. 基于 XML 文件
-    2. 基于 Properties 文件
-    3. 基于 Java 注解
-    4. 基于 Java API
-2. IoC 容器配置
-    1. 基于 XML 文件
-    2. 基于 Java 注解
-    3. 基于 Java API
-3. 外部化属性配置
-    1. 基于 Java 注解
+##### Bean 定义配置
+1. 基于 XML 文件
+2. 基于 Properties 文件
+3. 基于 Java 注解
+4. 基于 Java API
+##### IoC 容器配置
+1. 基于 XML 文件
+2. 基于 Java 注解
+3. 基于 Java API
+##### 外部化属性配置
+1. 基于 Java 注解
 
 这里在后续的篇章再进行展开，这里先做大概的了解。
+
+<br>
 <hr>
 
 #### Spring IOC 容器
@@ -273,6 +292,7 @@ ClassPathXmlApplicationContext 实现接口 BeanFactory ，具有 BeanFactory �
 
 后续篇章再做阐述。
 
+<br>
 <hr>
 
 #### Spring 应用上下文
@@ -287,6 +307,7 @@ ApplicationContext 除了 IoC 容器角色，还有提供：
 - Environment 抽象（Environment Abstraction）
 
 
+<br>
 <hr>
 
 #### Spring IOC 容器生命周期
@@ -297,8 +318,13 @@ ApplicationContext 除了 IoC 容器角色，还有提供：
 - 停止
 `AbstractApplicationContext # close`
 
+<br>
 <hr>
 
+
+#### 代码
+
+<a href="https://github.com/jackhance0825/thinking-in-spring-5.2.16/tree/main/ioc-container" target="_blank" > 本篇章代码 </a>
 
 
 

@@ -23,6 +23,7 @@ IOC（inversion of control） 翻译过来是，控制反转。
 控制反转用于增加程序的模块化并使其方便扩展，并在面向对象编程和其他编程范式中得到应用。
 
 
+<br>
 <hr>
 
 #### IOC 的足迹
@@ -38,6 +39,7 @@ pattern》中提出了自己对 IoC 以及 DI 的理解 <sup id="inversion-of-co
 - 2005年，Martin Fowler 在 《InversionOfControl》对 IoC 做出进一步的说明 <sup id="inversion-of-control-more">[[4]](#inversion-of-control-more-ref)</sup>
 
 
+<br>
 <hr>
 
 #### IOC 的实现策略
@@ -52,6 +54,7 @@ pattern》中提出了自己对 IoC 以及 DI 的理解 <sup id="inversion-of-co
 - 模板方法设计模式
 - 策略设计模式
 
+<br>
 <hr>
 
 #### IOC 容器到底是什么
@@ -73,6 +76,7 @@ pattern》中提出了自己对 IoC 以及 DI 的理解 <sup id="inversion-of-co
 
 因此，我们所期待的 IOC 容器应该具备以上的特征。
 
+<br>
 <hr>
 
 #### IOC 容器职责
@@ -88,6 +92,7 @@ pattern》中提出了自己对 IoC 以及 DI 的理解 <sup id="inversion-of-co
     - 外部化配置
     - 托管的资源（如Java Beans）
 
+<br>
 <hr>
 
 #### IOC 容器实现
@@ -105,6 +110,7 @@ pattern》中提出了自己对 IoC 以及 DI 的理解 <sup id="inversion-of-co
     - <a href="https://github.com/google/guice"  target="_blank" >Google Guice</a>
     - <a href="https://spring.io/projects/spring-framework"  target="_blank" >Spring Framework</a>
 
+<br>
 <hr>
 
 #### 小记
