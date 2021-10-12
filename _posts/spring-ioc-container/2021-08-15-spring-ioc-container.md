@@ -7,11 +7,11 @@ description: Spring IOC 容器概述
 ---
 
 
-#### Spring IOC 依赖查找
+### Spring IOC 依赖查找
 
 主动或手动的依赖查找方式，需要依赖容器或标准API实现。
 
-##### 根据 Bean 名称查找
+#### 根据 Bean 名称查找
 1. 实时查找
 ```xml
     <bean id="worker" class="com.jackhance.spring.ioc.container.model.Worker">
@@ -39,7 +39,7 @@ description: Spring IOC 容器概述
 ```
 延迟查找，可以通过对象工厂 FactoryBean 的方式来创建 Bean ,在调用 `ObjectFactory # getObject` 时，才进行对象创建。
 
-##### 根据 Bean 类型查找
+#### 根据 Bean 类型查找
 1. 单个 Bean 对象
 ```java
     Worker worker = beanFactory.getBean(Worker.class);
@@ -54,7 +54,7 @@ description: Spring IOC 容器概述
     }
 ```
 
-##### 根据 Bean 名称 + 类型查找
+#### 根据 Bean 名称 + 类型查找
 1. 根据 Java 注解查找
 ```java
         /**
@@ -119,7 +119,7 @@ description: Spring IOC 容器概述
 <br>
 <hr>
 
-#### Spring IOC 依赖注入
+### Spring IOC 依赖注入
 
 手动或自动依赖绑定的方式，无需依赖特定的容器和API。
 ```java
@@ -147,7 +147,7 @@ description: Spring IOC 容器概述
         }
 ```
 
-##### 根据 Bean 名称注入
+#### 根据 Bean 名称注入
 ```xml
     <bean id="workerGroup" class="com.jackhance.spring.ioc.container.model.WorkerGroup" autowire="no">
 
@@ -161,7 +161,7 @@ description: Spring IOC 容器概述
 ```
 
 
-##### 根据 Bean 类型注入
+#### 根据 Bean 类型注入
 ```xml
     <bean id="workerGroup" class="com.jackhance.spring.ioc.container.model.WorkerGroup" autowire="byType"> <!-- 通过类型依赖注入 -->
     </bean>
@@ -170,15 +170,15 @@ description: Spring IOC 容器概述
 集合 Bean 对象 : `WorkerGroup # workerCollection`
 
 
-##### 注入容器內建 Bean 对象
+#### 注入容器內建 Bean 对象
 `WorkerGroup # environment`
 `WorkerGroup # beanFactoryObjectFactory`
 
 
-##### 注入非 Bean 对象
+#### 注入非 Bean 对象
 `WorkerGroup # beanFactory`
 
-##### 注入类型
+#### 注入类型
 1. 实时注入: 在执行依赖注入前，对象已创建完毕
 2. 延迟注入：依赖注入对象工厂，在通过对象工厂获取对象时，才进行对象的实例化
 `WorkerGroup # beanFactoryObjectFactory`
@@ -186,16 +186,16 @@ description: Spring IOC 容器概述
 <br>
 <hr>
 
-#### Spring IOC 依赖来源
+### Spring IOC 依赖来源
 
-##### 自定义 Bean
+#### 自定义 Bean
 ```java
         WorkerGroup workerGroup = beanFactory.getBean("workerGroup", WorkerGroup.class);
         System.out.println("[依赖来源]自定义 Bean : " + workerGroup);
 ```
 
 
-##### 内建依赖 Bean
+#### 内建依赖 Bean
 ```java
         ObjectFactory<BeanFactory> beanFactoryObjectFactory = workerGroup.getBeanFactoryObjectFactory();
         BeanFactory beanFactory0 = beanFactoryObjectFactory.getObject();
@@ -203,7 +203,7 @@ description: Spring IOC 容器概述
 ```
 
 
-##### 容器內建 Bean
+#### 容器內建 Bean
 ```java
         Environment env = workerGroup.getEnvironment();
         System.out.println("[依赖来源]容器內建 Bean : " + env);
@@ -212,18 +212,18 @@ description: Spring IOC 容器概述
 <br>
 <hr>
 
-#### Spring IOC 配置元信息
+### Spring IOC 配置元信息
 
-##### Bean 定义配置
+#### Bean 定义配置
 1. 基于 XML 文件
 2. 基于 Properties 文件
 3. 基于 Java 注解
 4. 基于 Java API
-##### IoC 容器配置
+#### IoC 容器配置
 1. 基于 XML 文件
 2. 基于 Java 注解
 3. 基于 Java API
-##### 外部化属性配置
+#### 外部化属性配置
 1. 基于 Java 注解
 
 这里在后续的篇章再进行展开，这里先做大概的了解。
@@ -231,7 +231,7 @@ description: Spring IOC 容器概述
 <br>
 <hr>
 
-#### Spring IOC 容器
+### Spring IOC 容器
 
 BeanFactory 是 Spring 底层 IoC 容器
 ApplicationContext 是具备应用特性的 BeanFactory 超集
@@ -248,7 +248,7 @@ ApplicationContext 是具备应用特性的 BeanFactory 超集
         System.out.println(beanFactory.getBean(BeanFactory.class));
 ```
 
-##### BeanFactory 非同一个对象？
+#### BeanFactory 非同一个对象？
 
 我们可以找到源码 
 
@@ -288,14 +288,14 @@ AbstractRefreshableApplicationContext 的实现：
 ```
 ClassPathXmlApplicationContext 实现接口 BeanFactory ，具有 BeanFactory 接口的特性，但是并不是 BeanFactory 。ClassPathXmlApplicationContext 与 BeanFactory 的关系是以组合的形式存在。
 
-##### 为什么依赖查找 BeanFactory 会失败？
+#### 为什么依赖查找 BeanFactory 会失败？
 
 后续篇章再做阐述。
 
 <br>
 <hr>
 
-#### Spring 应用上下文
+### Spring 应用上下文
 
 ApplicationContext 除了 IoC 容器角色，还有提供：
 - 面向切面（AOP）
@@ -310,7 +310,7 @@ ApplicationContext 除了 IoC 容器角色，还有提供：
 <br>
 <hr>
 
-#### Spring IOC 容器生命周期
+### Spring IOC 容器生命周期
 
 - 启动
 `AbstractApplicationContext # refresh`
@@ -322,7 +322,7 @@ ApplicationContext 除了 IoC 容器角色，还有提供：
 <hr>
 
 
-#### 代码
+### 代码
 
 <a href="https://github.com/jackhance0825/thinking-in-spring-5.2.16/tree/main/ioc-container" target="_blank" > 本篇章代码 </a>
 

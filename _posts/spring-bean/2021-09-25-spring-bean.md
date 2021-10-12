@@ -1,9 +1,9 @@
 ---
-title: Spring 卷 - IOC 篇 - Spring Bean
+title: Spring 卷 - IOC 篇 - Spring Bean 初探
 date: 2021-09-25 14:59:00 +07:00
 modified: 2021-09-25 14:59:00 +07:00
 tags: [java, spring, ioc, bean]
-description: Spring Bean 详解
+description: Spring Bean 初探
 ---
 
 
@@ -20,9 +20,9 @@ description: Spring Bean 详解
 <br>
 <hr>
 
-#### BeanDefinition 的元信息
+### BeanDefinition 的元信息
 
-##### BeanDefinition 元信息包含：
+#### BeanDefinition 元信息包含：
 - Class：Bean 的类全名（非接口、非抽象类）
 - Name：Bean 的名称或者id
 - Scope：Bean 的作用域（singleton、prototype）
@@ -33,7 +33,7 @@ description: Spring Bean 详解
 - Initialization method：Bean 的初始化回调方法名称
 - Destruction method：Bean 的销毁回调方法名称`
 
-##### BeanDefinition 的构造
+#### BeanDefinition 的构造
 
 通过 BeanDefinitionBuilder 构建
 
@@ -64,7 +64,7 @@ genericBeanDefinition.setPropertyValues(mutablePropertyValues);
 <br>
 <hr>
 
-#### Spring Bean 的命名
+### Spring Bean 的命名
 
 每个 bean 都有一个或多个标识符。这些标识符在承载 bean 的容器中必须是唯一的。一个 bean 通常只有一个标识符。但是，如果它需要多个，则可以将多余的视为别名(Alias)。
 
@@ -108,11 +108,11 @@ public interface BeanNameGenerator {
 <br>
 <hr>
 
-#### Spring Bean 的别名
+### Spring Bean 的别名
 
 如果要为 bean 引入其他别名，也可以在name 属性中指定它们，用半角逗号 (,)、分号 (;) 或空格( )分隔。
 
-##### 使用xml定义：
+#### 使用xml定义：
 ```xml
 <alias name="myWorker" alias="systemA-worker"/>
 <alias name="myWorker" alias="systemB-worker"/>
@@ -120,7 +120,7 @@ public interface BeanNameGenerator {
 
 现在，每个组件和主应用程序都可以通过一个唯一的名称来引用，并且保证不会与任何其他定义发生冲突（有效地创建一个命名空间），但它们引用的是同一个 bean。
 
-##### 使用注解定义：
+#### 使用注解定义：
 ```java
 // 定义一个 id 为 worker 的 bean ，同时拥有别名 jackhance-worker
 @Bean(name = {"worker", "jackhance-worker"})
@@ -136,10 +136,10 @@ public Worker worker() {
 <br>
 <hr>
 
-#### Spring Bean 的注册
+### Spring Bean 的注册
 
 
-##### xml 配置元信息注册
+#### xml 配置元信息注册
 ```xml
 <bean id="worker" class="com.jackhance.spring.ioc.container.model.Worker">
     <property name="id" value="9527"/>
@@ -148,21 +148,21 @@ public Worker worker() {
 </bean>
 ```
 
-##### java 注解注册
+#### java 注解注册
 
 - `@Component` 及其"派生"注解 (e.g. `@Service`、 `@Controller` 等等)
 - `@Bean`
 - `@Import`
 
 
-##### java API 注册
+#### java API 注册
 
 - 命名方式：`BeanDefinitionRegistry # registerBeanDefinition(String, BeanDefinition)`
 - 非命名方式：`BeanDefinitionReaderUtils # registerWithGeneratedName(AbstractBeanDefinition, BeanDefinitionRegistry)`
 - 配置类方式：`AnnotatedBeanDefinitionReader # register(Class...)`
 
 
-##### 外部单例对象注册
+#### 外部单例对象注册
 
 `SingletonBeanRegistry # registerSingleton`
 
@@ -175,9 +175,9 @@ public Worker worker() {
 <hr>
 
 
-#### Spring Bean 的实例化
+### Spring Bean 的实例化
 
-##### 构造器方式实例化
+#### 构造器方式实例化
 
 方式1 ： 通过注解构造器的方式，实例化 bean
 
@@ -203,7 +203,7 @@ public Worker workerCreateByAnnotatedConstructor() {
 
 ```
 
-##### 静态方法方式实例化
+#### 静态方法方式实例化
 
 通过指定静态工厂方法，来实例化 bean ：
 
@@ -230,7 +230,7 @@ public class Worker {
 ```
 
 
-##### 工厂方法方式实例化
+#### 工厂方法方式实例化
 
 通过指定工厂方法的方式进行实例化：
 
@@ -251,7 +251,7 @@ public interface WorkerFactory {
 <bean id="worker-create-by-xml-factory-method" factory-bean="worker-factory" factory-method="createWorker"/>
 ```
 
-##### FactoryBean 方式实例化
+#### FactoryBean 方式实例化
 
 ```java
 /**
@@ -290,7 +290,7 @@ public WorkerFactoryBean workerCreateByAnnotatedFactoryBean() {
 }
 ```
 
-##### ServiceLoader 方式实例化 (特殊)
+#### ServiceLoader 方式实例化 (特殊)
 
 ServiceLoader 是一种特殊的服务实现方式。在实现服务的 java 平台中，可通过添加对应的服务供应实现类到类路径下，以此实现功能的扩展。
 
@@ -329,7 +329,7 @@ for (Iterator<WorkerFactory> it = serviceLoader.iterator(); it.hasNext(); ) {
 }
 ```
 
-##### AutowireCapableBeanFactory # createBean 方式实例化 (特殊)
+#### AutowireCapableBeanFactory # createBean 方式实例化 (特殊)
 
 ```java
 /**
@@ -406,10 +406,10 @@ InitializingBean#afterPropertiesSet() : com.jackhance.spring.ioc.bean.model.Gene
 <hr>
 
 
-#### Spring Bean 的初始化
+### Spring Bean 的初始化
 
 
-##### `@PostConstruct` 方法
+#### `@PostConstruct` 方法
 
 Bean 可在方法标注注解 `@PostConstruct` ，可在 Bean 初始化时触发。
 
@@ -428,7 +428,7 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 }
 ```
 
-##### `InitializingBean # afterPropertiesSet`
+#### `InitializingBean # afterPropertiesSet`
 
 Bean 实现接口 `InitializingBean # afterPropertiesSet` ，可在 Bean 初始化时触发。
 
@@ -448,7 +448,7 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 ```
 
 
-##### 自定义初始化方法
+#### 自定义初始化方法
 
 首先定义 Bean 的初始化方法：
 
@@ -472,7 +472,7 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 - Java API：`AbstractBeanDefinition # setInitMethodName(String)`
 
 
-##### 初始化方法的执行顺序
+#### 初始化方法的执行顺序
 
 1. `@PostConstruct`
 2. `InitializingBean # afterPropertiesSet`
@@ -483,11 +483,11 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 <hr>
 
 
-#### Spring Bean 的延迟初始化
+### Spring Bean 的延迟初始化
 
 在 Spring 容器启动时，标注了延迟初始化的 Bean 并不会初始化，初始化会发生在获取时。
 
-##### xml 配置
+#### xml 配置
 
 ```xml
 <bean id="worker-factory-by-xml-lazy" class="com.jackhance.spring.ioc.bean.model.GenericWorkerFactory"
@@ -496,7 +496,7 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
         lazy-init="true" />
 ```
 
-##### 注解 `@Lazy`
+#### 注解 `@Lazy`
 
 ```java
 @Bean(name = "worker-factory-create-by-annotated-lazy", initMethod = "doInit", destroyMethod = "doDestroy")
@@ -510,9 +510,9 @@ public WorkerFactory annotatedLazyWorkerFactory() {
 <hr>
 
 
-#### Spring Bean 的销毁
+### Spring Bean 的销毁
 
-##### `@PreDestroy`
+#### `@PreDestroy`
 
 ```java
 public class GenericWorkerFactory implements WorkerFactory, InitializingBean, DisposableBean, BeanNameAware {
@@ -530,7 +530,7 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 ```
 
 
-##### `DisposableBean # destroy`
+#### `DisposableBean # destroy`
 
 ```java
 public class GenericWorkerFactory implements WorkerFactory, InitializingBean, DisposableBean, BeanNameAware {
@@ -548,7 +548,7 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 ```
 
 
-##### 自定义销毁方法
+#### 自定义销毁方法
 
 首先定义 Bean 的销毁方法：
 
@@ -570,7 +570,7 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 - Java 注解：`@Bean(destroy="destroy")`
 - Java API：`AbstractBeanDefinition # setDestroyMethodName(String)`
 
-##### 销毁方法的执行顺序
+#### 销毁方法的执行顺序
 
 1. `@PreDestroy`
 2. `DisposableBean # destroy`
@@ -580,12 +580,12 @@ public class GenericWorkerFactory implements WorkerFactory, InitializingBean, Di
 <hr>
 
 
-#### 小记
+### 小记
 
 <small id="xsd-id-ref"><sup>[[1]](#xsd-id)</sup> <a href="https://github.com/spring-projects/spring-framework/blob/3.0.x/org.springframework.beans/src/main/resources/org/springframework/beans/factory/xml/spring-beans-3.0.xsd" target="_blank" > xsd-ID 声明 </a></small> 
 
 <small id="xsd-string-ref"><sup>[[2]](#xsd-string)</sup> <a href="https://github.com/spring-projects/spring-framework/blob/3.1.x/org.springframework.beans/src/main/resources/org/springframework/beans/factory/xml/spring-beans-3.1.xsd" target="_blank" > xsd-string 声明 </a></small> 
 
-#### 代码
+### 代码
 
 <a href="https://github.com/jackhance0825/thinking-in-spring-5.2.16/tree/main/bean" target="_blank" > 本篇章代码 </a>
