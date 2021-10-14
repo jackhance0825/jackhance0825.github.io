@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US"><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en-US" /><updated>2021-10-14T20:36:29+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">jackhance’s blog</title><subtitle>Just Be Yourself  !   Trust Yourself  !   Love Yourself !</subtitle><author><name>jackhance</name><email>jackhance0825@163.com</email></author><entry><title type="html">Spring 卷 - IOC 篇 - Spring Ioc 依赖查找</title><link href="http://localhost:4000/spring-ioc-dependency-lookup/" rel="alternate" type="text/html" title="Spring 卷 - IOC 篇 - Spring Ioc 依赖查找" /><published>2021-10-08T22:13:00+08:00</published><updated>2021-10-08T22:13:00+08:00</updated><id>http://localhost:4000/spring-ioc-dependency-lookup</id><content type="html" xml:base="http://localhost:4000/spring-ioc-dependency-lookup/">&lt;h3 id=&quot;依赖查找的起源&quot;&gt;依赖查找的起源&lt;/h3&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US"><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en-US" /><updated>2021-10-14T20:44:46+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">jackhance’s blog</title><subtitle>Just Be Yourself  !   Trust Yourself  !   Love Yourself !</subtitle><author><name>jackhance</name><email>jackhance0825@163.com</email></author><entry><title type="html">Spring 卷 - IOC 篇 - Spring Ioc 依赖查找</title><link href="http://localhost:4000/spring-ioc-dependency-lookup/" rel="alternate" type="text/html" title="Spring 卷 - IOC 篇 - Spring Ioc 依赖查找" /><published>2021-10-08T22:13:00+08:00</published><updated>2021-10-08T22:13:00+08:00</updated><id>http://localhost:4000/spring-ioc-dependency-lookup</id><content type="html" xml:base="http://localhost:4000/spring-ioc-dependency-lookup/">&lt;h3 id=&quot;依赖查找的起源&quot;&gt;依赖查找的起源&lt;/h3&gt;
 
 &lt;p&gt;Spring 的依赖查找，可以从 JavaBeans 看到身影。Spring 的依赖查找，很大程度地借鉴了 JavaBeans 的实现。&lt;/p&gt;
 
@@ -60,7 +60,7 @@
 &lt;p&gt;详见官方文档&lt;sup id=&quot;bean-context-hierarchical&quot;&gt;&lt;a href=&quot;#bean-context-hierarchical-ref&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 
 &lt;figure&gt;
-&lt;img src=&quot;/spring-ioc-dependency-lookup/beancontext.gif&quot; alt=&quot;beanContext&quot; /&gt;
+&lt;img src=&quot;./spring-ioc-dependency-lookup/beancontext.gif&quot; alt=&quot;beanContext&quot; /&gt;
 &lt;figcaption&gt;Fig 1. beanContext.&lt;/figcaption&gt;
 &lt;/figure&gt;
 
