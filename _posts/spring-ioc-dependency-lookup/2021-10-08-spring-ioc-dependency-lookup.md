@@ -71,7 +71,7 @@ public interface BeanContextServices extends BeanContext, BeanContextServicesLis
 详见官方文档<sup id="bean-context-hierarchical">[[1]](#bean-context-hierarchical-ref)</sup>
 
 <figure>
-<img src="./spring-ioc-dependency-lookup/beancontext.gif" alt="beanContext">
+<img src="./beancontext.gif" alt="beanContext">
 <figcaption>Fig 1. beanContext.</figcaption>
 </figure>
 
