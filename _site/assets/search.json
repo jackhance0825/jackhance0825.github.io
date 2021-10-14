@@ -26,6 +26,13 @@
       "tags"     : "java, spring, ioc",
       "url"      : "/spring-ioc-what-is-ioc/",
       "date"     : "2021-08-15 10:37:47 +0800"
+    } ,
+  
+    {
+      "title"    : "What is a shell? 🐚 adalah kerang ajaib?",
+      "tags"     : "unix/linux, cli",
+      "url"      : "/apa-itu-shell/",
+      "date"     : "2020-01-25 12:58:47 +0800"
     } 
   
 ]
