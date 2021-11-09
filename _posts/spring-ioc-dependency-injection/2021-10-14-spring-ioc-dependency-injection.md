@@ -95,7 +95,7 @@ public enum Autowire {
 
 ### Setter 方法依赖注入
 
-Setter 方法依赖注入实现方式分为手动模式和自动模式。
+Setter 方法依赖注入实现方式分为手动模式和自动模式，通过 Bean 的 setter 方法实现依赖注入。
 
 先定义 Bean 类 WorkerHolder，提供 setter 方法，通过以下方式依赖注入 Worker：
 ```java
@@ -118,8 +118,7 @@ public class WorkerHolder {
 
 #### 手动模式
 
-##### xml 资源配置元信息方式：
-
+##### xml 资源配置元信息方式
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -143,7 +142,7 @@ public class WorkerHolder {
 </beans>
 ```
 
-##### Java 注解配置元信息方式：
+##### Java 注解配置元信息方式
 
 ```java
     /**
@@ -159,7 +158,7 @@ public class WorkerHolder {
 ```
 
 
-##### API 配置元信息方式：
+##### API 配置元信息方式
 
 ```java
 /**
@@ -197,7 +196,7 @@ public class APIDependencySetterInjectDemo {
 
 #### 自动模式
 
-##### byName：
+##### byName
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -212,7 +211,7 @@ public class APIDependencySetterInjectDemo {
 </beans>
 ```
 
-##### byType：
+##### byType
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -233,11 +232,11 @@ public class APIDependencySetterInjectDemo {
 
 ### 构造器依赖注入
 
-构造器依赖注入实现方式分为手动模式和自动模式。
+构造器依赖注入实现方式分为手动模式和自动模式，通过 Bean 的构造方法实现依赖注入。
 
 #### 手动模式
 
-##### xml 资源配置元信息方式：
+##### xml 资源配置元信息方式
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -255,7 +254,7 @@ public class APIDependencySetterInjectDemo {
 ```
 
 
-##### Java 注解配置元信息方式：
+##### Java 注解配置元信息方式
 
 ```java
 
@@ -266,10 +265,9 @@ public class APIDependencySetterInjectDemo {
 public WorkerHolder annotatedWorkerHolder(Worker worker) {
 	return new WorkerHolder(worker);
 }
-
 ```
 
-##### API 配置元信息方式：
+##### API 配置元信息方式
 
 ```java
 /**
@@ -309,7 +307,7 @@ public class APIDependencyConstructorInjectDemo {
 
 #### 自动模式
 
-##### constructor：
+##### constructor
 
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -336,7 +334,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```java
 	/**
-     * @Autowired 方式依赖注入
+     * {@link Autowired} 方式依赖注入
      */
     @Autowired
     private WorkerHolder workerHolder1;
@@ -348,7 +346,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```java
     /**
-     * @Resource 方式依赖注入
+     * {@link Resource} 方式依赖注入
      */
     @Resource
     private WorkerHolder workerHolder2;
@@ -359,7 +357,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```java
     /**
-     * @Inject 方式依赖注入
+     * {@link Inject} 方式依赖注入
      */
     @Inject
     private WorkerHolder workerHolder3;
@@ -376,7 +374,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```java
     /**
-     * @Autowired 方式依赖注入
+     * {@link Autowired} 方式依赖注入
      */
     @Autowired
     public void init1(Worker worker) {
@@ -389,7 +387,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```java
     /**
-     * @Resource 方式依赖注入
+     * {@link Resource} 方式依赖注入
      */
     @Resource
     public void init2(Worker worker) {
@@ -401,7 +399,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```java
     /**
-     * @Inject 方式依赖注入
+     * {@link Inject} 方式依赖注入
      */
     @Inject
     public void init3(Worker worker) {
@@ -413,7 +411,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```java
     /**
-     * @Bean 方式依赖注入，并注册 workerHolder 实例到 Spring 容器
+     * {@link Bean} 方式依赖注入，并注册 workerHolder 实例到 Spring 容器
      */
     @Bean
     public WorkerHolder workerHolder(Worker worker) {
@@ -426,25 +424,19 @@ public class APIDependencyConstructorInjectDemo {
 
 ### 回调依赖注入
 
-Spring 接口回调，通过 Aware 接口实现，组件类可以通过实现接口，实现注入指定资源。
+Spring 接口回调，通过 `Aware` 接口实现，组件类可以通过实现接口，实现注入指定资源。
 
-BeanFactoryAware：获取 IoC 容器 BeanFactory
-
-ApplicationContextAware：获取 Spring 应用上下文 ApplicationContext 对象
-
-EnvironmentAware：获取 Environment 对象
-
-ResourceLoaderAware：获取资源加载器对象 ResourceLoader
-
-BeanClassLoaderAware：获取加载当前 Bean Class 的 ClassLoader
-
-BeanNameAware：获取当前 Bean 的名称
-
-MessageSourceAware：获取 MessageSource 对象，用于 Spring 国际化
-
-ApplicationEventPublisherAware：获取 ApplicationEventPublisher 对象，用于 Spring 事件
-
-EmbeddedValueResolverAware：获取 StringValueResolve 对象，用于占位符处理
+|       `Aware` 接口      |      获取的资源       |
+| :---------------------- | :-------------------: |
+| BeanFactoryAware | 获取 IoC 容器 BeanFactory |
+| ApplicationContextAware | 获取 Spring 应用上下文 ApplicationContext 对象 |
+| EnvironmentAware | 获取 Environment 对象 |
+| ResourceLoaderAware | 获取资源加载器对象 ResourceLoader |
+| BeanClassLoaderAware | 获取加载当前 Bean Class 的 ClassLoader |
+| BeanNameAware | 获取当前 Bean 的名称 |
+| MessageSourceAware | 获取 MessageSource 对象，用于 Spring 国际化 |
+| ApplicationEventPublisherAware | 获取 ApplicationEventPublisher 对象，用于 Spring 事件 |
+| EmbeddedValueResolverAware | 获取 StringValueResolve 对象，用于占位符处理 |
 
 ```java
 /**
