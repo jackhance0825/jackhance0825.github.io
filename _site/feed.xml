@@ -1,4 +1,184 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US"><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en-US" /><updated>2021-10-14T21:06:29+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">jackhance’s blog</title><subtitle>Just Be Yourself  !   Trust Yourself  !   Love Yourself !</subtitle><author><name>jackhance</name><email>jackhance0825@163.com</email></author><entry><title type="html">Spring 卷 - IOC 篇 - Spring Ioc 依赖查找</title><link href="http://localhost:4000/spring-ioc-dependency-lookup/" rel="alternate" type="text/html" title="Spring 卷 - IOC 篇 - Spring Ioc 依赖查找" /><published>2021-10-08T22:13:00+08:00</published><updated>2021-10-08T22:13:00+08:00</updated><id>http://localhost:4000/spring-ioc-dependency-lookup</id><content type="html" xml:base="http://localhost:4000/spring-ioc-dependency-lookup/">&lt;h3 id=&quot;依赖查找的起源&quot;&gt;依赖查找的起源&lt;/h3&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US"><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en-US" /><updated>2021-10-14T23:32:50+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">jackhance’s blog</title><subtitle>Just Be Yourself  !   Trust Yourself  !   Love Yourself !</subtitle><author><name>jackhance</name><email>jackhance0825@163.com</email></author><entry><title type="html">Spring 卷 - IOC 篇 - Spring Ioc 依赖注入</title><link href="http://localhost:4000/spring-ioc-dependency-injection/" rel="alternate" type="text/html" title="Spring 卷 - IOC 篇 - Spring Ioc 依赖注入" /><published>2021-10-14T22:11:00+08:00</published><updated>2021-10-14T22:11:00+08:00</updated><id>http://localhost:4000/spring-ioc-dependency-injection</id><content type="html" xml:base="http://localhost:4000/spring-ioc-dependency-injection/">&lt;h3 id=&quot;依赖注入的模式和类型&quot;&gt;依赖注入的模式和类型&lt;/h3&gt;
+
+&lt;h4 id=&quot;模式&quot;&gt;模式&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;手动模式：通过配置或者API的方式，确定注入规则。
+    &lt;ul&gt;
+      &lt;li&gt;xml 资源配置元信息，实现依赖注入&lt;/li&gt;
+      &lt;li&gt;Java 注解配置元信息，实现依赖注入&lt;/li&gt;
+      &lt;li&gt;API 配置元信息，实现依赖注入&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;自定模式：实现方提供依赖自动关联的方式，BeanFactory 容器按照内建的注入规则，实现依赖注入。
+    &lt;ul&gt;
+      &lt;li&gt;Autowiring 自动绑定&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;类型&quot;&gt;类型&lt;/h4&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Setter 方法：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;property name=&quot;worker&quot; ref=&quot;workerBean&quot;/&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;构造器: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;constructor-arg name=&quot;id&quot;  value=&quot;123&quot; /&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;字段: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@Resource Worker worker;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;方法: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@Autowire public void doWorker(Worker worker) {...}&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;接口回调 Aware: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;class Demo implements ApplicationContextAware {...}&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;自动绑定autowiring&quot;&gt;自动绑定（Autowiring）&lt;/h3&gt;
+
+&lt;p&gt;什么是自动绑定呢？我从官网摘录了部分：&lt;sup id=&quot;autowiring-collaborators&quot;&gt;&lt;a href=&quot;#autowiring-collaborators-ref&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;The Spring container can autowire relationships between collaborating beans. You can let Spring resolve collaborators (other beans) automatically for your bean by inspecting the contents of the ApplicationContext. Autowiring has the following advantages:
+
+Autowiring can significantly reduce the need to specify properties or constructor arguments. (Other mechanisms such as a bean template discussed elsewhere in this chapter are also valuable in this regard.)
+
+Autowiring can update a configuration as your objects evolve. For example, if you need to add a dependency to a class, that dependency can be satisfied automatically without you needing to modify the configuration. Thus autowiring can be especially useful during development, without negating the option of switching to explicit wiring when the code base becomes more stable.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Spring 容器可通过自动绑定 Bean 协作者之间的关系。当然这里的 Bean 并不只是我们注册到 Spring 容器内部的，还包含了内建的 Bean ，外部的配置资源等等。因此我觉得这里用协作者是比较恰当的。&lt;/p&gt;
+
+&lt;p&gt;Spring 的自动绑定包含了俩个优点：&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;自动绑定显著地减少了指定属性或者构造器参数的需求。&lt;/li&gt;
+  &lt;li&gt;自动绑定会自适应配置。如&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;property name=&quot;name&quot; ref=&quot;jackhance&quot;/&amp;gt;&lt;/code&gt; ,名称为 jackhance 的 Bean 的配置变化时，这里绑定的属性会同时变化，而不像&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;property name=&quot;name&quot; value=&quot;jackhance&quot;/&amp;gt;&lt;/code&gt; 固化为 jackhance，一成不变。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;自动绑定模式&quot;&gt;自动绑定模式&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;no ： 默认值，Autowiring 未激活，需要手动绑定&lt;/li&gt;
+  &lt;li&gt;byName ：依据属性的名称作为 Bean 名称进行依赖查找，并将查找到的 Bean 进行绑定&lt;/li&gt;
+  &lt;li&gt;byType ： 依据属性的类型进行依赖查找，并将查找到的 Bean 进行绑定&lt;/li&gt;
+  &lt;li&gt;constructor ：特殊 byType 类型，用于构造器参数注入&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在 Spring 中有对应的枚举，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;org.springframework.beans.factory.annotation.Autowire&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Autowire&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * Constant that indicates no autowiring at all.
+	 */&lt;/span&gt;
+	&lt;span class=&quot;no&quot;&gt;NO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;AutowireCapableBeanFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;AUTOWIRE_NO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * Constant that indicates autowiring bean properties by name.
+	 */&lt;/span&gt;
+	&lt;span class=&quot;no&quot;&gt;BY_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;AutowireCapableBeanFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;AUTOWIRE_BY_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
+
+	&lt;span class=&quot;cm&quot;&gt;/**
+	 * Constant that indicates autowiring bean properties by type.
+	 */&lt;/span&gt;
+	&lt;span class=&quot;no&quot;&gt;BY_TYPE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;AutowireCapableBeanFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;AUTOWIRE_BY_TYPE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;//...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;自动绑定的限制&quot;&gt;自动绑定的限制&lt;/h4&gt;
+
+&lt;p&gt;我从官网摘录了部分：&lt;sup id=&quot;limitations-and-disadvantages-of-autowiring&quot;&gt;&lt;a href=&quot;#limitations-and-disadvantages-of-autowiring-ref&quot;&gt;[2]&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;显式指定依赖会覆盖自动绑定。&lt;/li&gt;
+  &lt;li&gt;无法自动绑定原始类型（e.g. int、short、long）、Strings、Classes 。Spring故意这么设计的。（自动绑定本身伴随着不确定性，绑定的范围进行限定，应该是降低不确定性造成的影响）&lt;/li&gt;
+  &lt;li&gt;相比明确的绑定，自动绑定是缺乏精确性的。使用自动绑定时，Spring 需要猜测绑定的 Bean ，如果出现歧义，会产生不想期待的结果。&lt;/li&gt;
+  &lt;li&gt;若通过 setter 方法或者构造器注入时，匹配结果为多个 Bean ，但是方法期待的结果为单个 Bean ，这时会抛错。需要指定 @Primary 的 Bean。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;setter-方法依赖注入&quot;&gt;Setter 方法依赖注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;构造器依赖注入&quot;&gt;构造器依赖注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;字段依赖注入&quot;&gt;字段依赖注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;方法依赖注入&quot;&gt;方法依赖注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;回调依赖注入&quot;&gt;回调依赖注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;依赖注入类型选择&quot;&gt;依赖注入类型选择&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;基础类型注入&quot;&gt;基础类型注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;集合类型注入&quot;&gt;集合类型注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;限定注入&quot;&gt;限定注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;延迟依赖注入&quot;&gt;延迟依赖注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;autowired-注入原理&quot;&gt;@Autowired 注入原理&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;java-通用注解注入原理&quot;&gt;Java 通用注解注入原理&lt;/h3&gt;
+
+&lt;p&gt;CommonAnnotationBeanPostProcessor&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;inject-注入原理&quot;&gt;@Inject 注入原理&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;自定义依赖注入&quot;&gt;自定义依赖注入&lt;/h3&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;小记&quot;&gt;小记&lt;/h3&gt;
+
+&lt;p&gt;&lt;small id=&quot;autowiring-collaborators-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#autowiring-collaborators&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-autowire&quot; target=&quot;_blank&quot;&gt; Autowiring Collaborators &lt;/a&gt;&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;small id=&quot;limitations-and-disadvantages-of-autowiring-ref&quot;&gt;&lt;sup&gt;&lt;a href=&quot;#limitations-and-disadvantages-of-autowiring&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt; &lt;a href=&quot;https://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/spring-framework-reference/core.html#beans-autowired-exceptions&quot; target=&quot;_blank&quot;&gt; limitations and disadvantages of autowiring &lt;/a&gt;&lt;/small&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;代码&quot;&gt;代码&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/jackhance0825/thinking-in-spring-5.2.16/tree/main/ioc-dependency-injection&quot; target=&quot;_blank&quot;&gt; 本篇章代码 &lt;/a&gt;&lt;/p&gt;</content><author><name>jackhance</name><email>jackhance0825@163.com</email></author><category term="java" /><category term="spring" /><category term="ioc" /><category term="dependency" /><category term="injection" /><summary type="html">依赖注入的模式和类型</summary></entry><entry><title type="html">Spring 卷 - IOC 篇 - Spring Ioc 依赖查找</title><link href="http://localhost:4000/spring-ioc-dependency-lookup/" rel="alternate" type="text/html" title="Spring 卷 - IOC 篇 - Spring Ioc 依赖查找" /><published>2021-10-08T22:13:00+08:00</published><updated>2021-10-08T22:13:00+08:00</updated><id>http://localhost:4000/spring-ioc-dependency-lookup</id><content type="html" xml:base="http://localhost:4000/spring-ioc-dependency-lookup/">&lt;h3 id=&quot;依赖查找的起源&quot;&gt;依赖查找的起源&lt;/h3&gt;
 
 &lt;p&gt;Spring 的依赖查找，可以从 JavaBeans 看到身影。Spring 的依赖查找，很大程度地借鉴了 JavaBeans 的实现。&lt;/p&gt;
 

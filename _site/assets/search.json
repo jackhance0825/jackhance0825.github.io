@@ -1,6 +1,13 @@
 [
   
     {
+      "title"    : "Spring 卷 - IOC 篇 - Spring Ioc 依赖注入",
+      "tags"     : "java, spring, ioc, dependency, injection",
+      "url"      : "/spring-ioc-dependency-injection/",
+      "date"     : "2021-10-14 22:11:00 +0800"
+    } ,
+  
+    {
       "title"    : "Spring 卷 - IOC 篇 - Spring Ioc 依赖查找",
       "tags"     : "java, spring, ioc, dependency, lookup",
       "url"      : "/spring-ioc-dependency-lookup/",
