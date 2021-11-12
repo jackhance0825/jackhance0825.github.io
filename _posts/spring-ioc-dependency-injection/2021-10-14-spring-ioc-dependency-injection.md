@@ -95,26 +95,7 @@ public enum Autowire {
 
 ### Setter 方法依赖注入
 
-Setter 方法依赖注入实现方式分为手动模式和自动模式，通过 Bean 的 setter 方法实现依赖注入。
-
-先定义 Bean 类 WorkerHolder，提供 setter 方法，通过以下方式依赖注入 Worker：
-```java
-/**
- * {@link Worker} Holder 类
- *
- * @author jackhance
- * @mail jackhance0825@163.com
- */
-public class WorkerHolder {
-
-    private Worker worker;
-
-    public void setWorker(Worker worker) {
-        this.worker = worker;
-    }
-	// 省略其他方法、字段
-}
-```
+Setter 方法依赖注入，实现方式分为**手动模式**和**自动模式**，通过 Bean 的 setter 方法实现依赖注入。
 
 #### 手动模式
 
@@ -142,6 +123,8 @@ public class WorkerHolder {
 </beans>
 ```
 
+通过 xml 配置，将 id 为 simpleWorker 的 Bean，通过 WorkerHolder#setWorker 方法，依赖注入到 id 为workerHolder 的 Bean。
+
 ##### Java 注解配置元信息方式
 
 ```java
@@ -154,9 +137,9 @@ public class WorkerHolder {
         holder.setWorker(worker);
         return holder;
     }
-
 ```
 
+通过注解 `@Bean` 依赖注入类型为 Worker 的Bean（存在多个时，选择 primary），方法体内通过 setter 方法构建 annotatedWorkerHolder ，并注册 id 为 annotatedWorkerHolder 的 Bean 到 BeanFactory。
 
 ##### API 配置元信息方式
 
@@ -211,6 +194,8 @@ public class APIDependencySetterInjectDemo {
 </beans>
 ```
 
+按属性名称自动装配。 Spring 查找与需要自动装配的属性同名的 bean。例如，如果一个 bean 定义被设置为按名称自动装配并且它包含一个主属性（即它有一个 setWorker(..) 方法），Spring 会查找一个名为 worker 的 bean 定义并使用它来设置属性。
+
 ##### byType
 
 ```xml
@@ -226,13 +211,14 @@ public class APIDependencySetterInjectDemo {
 </beans>
 ```
 
+如果容器中只存在一个属性类型的 bean，则让属性自动装配。如果存在多个（不存在 primary ），则会引发致命异常，这表明您不能为该 bean 使用 byType 自动装配。如果没有匹配的 bean，则不会发生任何事情（未设置属性）。
 
 <br>
 <hr>
 
 ### 构造器依赖注入
 
-构造器依赖注入实现方式分为手动模式和自动模式，通过 Bean 的构造方法实现依赖注入。
+构造器依赖注入实现方式分为**手动模式**和**自动模式**，通过 Bean 的构造方法实现依赖注入。
 
 #### 手动模式
 
@@ -253,6 +239,7 @@ public class APIDependencySetterInjectDemo {
 </beans>
 ```
 
+通过 xml 配置，将 id 为 simpleWorker 的 Bean，通过 WorkerHolder 的构造方法，依赖注入到构造参数 worker。
 
 ##### Java 注解配置元信息方式
 
@@ -322,6 +309,7 @@ public class APIDependencyConstructorInjectDemo {
 </beans>
 ```
 
+类似于 byType 但适用于构造函数参数。如果容器中没有一个构造函数参数类型的 bean，则会引发致命错误。
 
 <br>
 <hr>
@@ -341,6 +329,7 @@ public class APIDependencyConstructorInjectDemo {
 
 ```
 
+`@Autowired` 的依赖注入，是通过 `AutowiredAnnotationBeanPostProcessor` 实现依赖注入。
 
 #### `@Resource`
 
@@ -353,7 +342,10 @@ public class APIDependencyConstructorInjectDemo {
 
 ```
 
-#### `@inject`
+`@Resource` 的依赖注入，是通过 `CommonAnnotationBeanPostProcessor` 实现依赖注入。
+
+
+#### `@Inject`
 
 ```java
     /**
@@ -362,6 +354,8 @@ public class APIDependencyConstructorInjectDemo {
     @Inject
     private WorkerHolder workerHolder3;
 ```
+
+JSR 330 `@Inject` 的依赖注入，是通过 `AutowiredAnnotationBeanPostProcessor` 实现依赖注入。
 
 <br>
 <hr>
@@ -395,7 +389,7 @@ public class APIDependencyConstructorInjectDemo {
     }
 ```
 
-#### `@inject`
+#### `@Inject`
 
 ```java
     /**
@@ -438,6 +432,8 @@ Spring 接口回调，通过 `Aware` 接口实现，组件类可以通过实现�
 | ApplicationEventPublisherAware | 获取 ApplicationEventPublisher 对象，用于 Spring 事件 |
 | EmbeddedValueResolverAware | 获取 StringValueResolve 对象，用于占位符处理 |
 
+<br>
+
 ```java
 /**
  * 基于 {@link Aware} 接口回调的依赖注入示例
@@ -464,13 +460,7 @@ public class AwareInterfaceInjectDemo implements BeanFactoryAware, ApplicationCo
         // 启动应用上下文
         applicationContext.refresh();
 
-        AwareInterfaceInjectDemo demo = applicationContext.getBean(AwareInterfaceInjectDemo.class);
-
-        System.out.printf("beanFactory equals : %s, beanFactory = %s%n", (demo.beanFactory == applicationContext.getBeanFactory()), demo.beanFactory);
-
-        System.out.printf("applicationContext equals : %s, applicationContext = %s%n", (demo.applicationContext == applicationContext), demo.applicationContext);
-
-        System.out.println("resourceLoader = " + demo.resourceLoader);
+        // 省略业务逻辑...
 
         // 关闭应用上下文
         applicationContext.close();
@@ -500,15 +490,35 @@ public class AwareInterfaceInjectDemo implements BeanFactoryAware, ApplicationCo
 
 ### 依赖注入类型选择
 
-低依赖：构造器注入
+#### 构造器注入使用场景
 
-多依赖：Setter 方法注入
+Spring 团队通常**提倡**构造函数注入，因为它可以让您将应用程序组件实现为不可变对象，并确保所需的依赖项不是null。此外，构造函数注入的组件总是以完全初始化的状态返回给客户端（调用）代码。
 
-便利性：字段注入
+但是，大量的构造参数会降低代码的可读性，同时，也代表此类的职责不够单一，应该考虑重构。
 
-声明类：方法注入
+因此，`在强依赖、低依赖场景，选构造器注入。`
 
+#### Setter 方法注入使用场景
 
+对于强制依赖项的构造器注入，可选依赖项使用 Setter 方法注入是一种比较优雅的方式。可以在类中配置合理的默认值的可选依赖项，通过 Setter 方法注入有选择性注入依赖。
+
+但是，依赖注入的顺序，完全依赖于用户的操作顺序，如果依赖项存在前后依赖关系，使用此方式，会存在隐患。
+
+因此，`在多依赖场景，选 Setter 方法注入。`
+
+#### 字段注入使用场景
+
+字段注入方式，通过 `@Autowired` 、`@Resource`、`@Inject` 或者自定义注解，标注到字段上，就可以实现依赖注入，这种方式对于我们写程序是很便利的。
+
+但是，这种方式无论在 Spring 或者 Spring Boot 官网上，作者偏好于构造器注入，字段注入是处于准备淘汰的状态。
+
+因此，`字段注入方式，简单便利。`
+
+#### 方法注入使用场景
+
+使用方法注入时，更建议使用 `@Bean` 注解注入参数，Spring 会依赖注入参数到方法，在 Bean 构造的情况下，这其实是一种组合方式，先通过注解依赖注入，在通过手动 API 注入参数，构造 Bean。
+
+因此，`声明类，选方法注入。`
 
 <br>
 <hr>
@@ -552,6 +562,7 @@ public class AwareInterfaceInjectDemo implements BeanFactoryAware, ApplicationCo
 public @interface Group {
 }
 ```
+<br>
 
 ```java
     @Autowired
