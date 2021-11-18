@@ -520,27 +520,6 @@ Spring 团队通常**提倡**构造函数注入，因为它可以让您将应用
 
 因此，`声明类，选方法注入。`
 
-<br>
-<hr>
-
-### 基础类型注入
-
-
-
-
-
-
-
-<br>
-<hr>
-
-### 集合类型注入
-
-
-
-
-
-
 
 <br>
 <hr>
@@ -635,6 +614,213 @@ public @interface Group {
     public Worker worker6() {
         return buildWorker("6", "jackhance", 30);
     }
+
+    public Worker buildWorker(String id, String name, int age) {
+        Worker worker = new Worker();
+        worker.setId(id);
+        worker.setName(name);
+        worker.setAge(age);
+        return worker;
+    }
+
+    public static void main(String[] args) {
+        // 创建应用上下文
+        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
+
+        // 注册注册类
+        applicationContext.register(QualifierInjectDemo.class);
+
+        // 启动应用上下文
+        applicationContext.refresh();
+
+        QualifierInjectDemo demo = applicationContext.getBean(QualifierInjectDemo.class);
+
+        // 期待输出 worker2 Bean
+        System.out.println("demo.worker = " + demo.worker);
+        // 期待输出 worker4 Bean
+        System.out.println("demo.qualifierWorker = " + demo.qualifierWorker);
+        // 期待输出 worker1-6
+        System.out.println("demo.workers = " + demo.workers);
+        // 期待输出 worker3 worker4 worker5 worker6
+        System.out.println("demo.qualifiedUsers = " + demo.qualifierWorkers);
+        // 期待输出 worker5 worker6
+        System.out.println("demo.groupWorkers = " + demo.groupWorkers);
+
+        // 关闭应用上下文
+        applicationContext.close();
+    }
+```
+
+<br>
+
+output:
+```text
+demo.worker = Worker{id='2', name='jackhance', age=30, hash=945591847}
+demo.qualifierWorker = Worker{id='4', name='jackhance', age=30, hash=328827614}
+demo.workers = [Worker{id='1', name='jackhance', age=30, hash=109228794}, Worker{id='2', name='jackhance', age=30, hash=945591847}, Worker{id='3', name='jackhance', age=30, hash=561959774}, Worker{id='4', name='jackhance', age=30, hash=328827614}, Worker{id='5', name='jackhance', age=30, hash=2110756088}, Worker{id='6', name='jackhance', age=30, hash=580871917}]
+demo.qualifiedUsers = [Worker{id='3', name='jackhance', age=30, hash=561959774}, Worker{id='4', name='jackhance', age=30, hash=328827614}, Worker{id='5', name='jackhance', age=30, hash=2110756088}, Worker{id='6', name='jackhance', age=30, hash=580871917}]
+demo.groupWorkers = [Worker{id='5', name='jackhance', age=30, hash=2110756088}, Worker{id='6', name='jackhance', age=30, hash=580871917}]
+```
+
+<br>
+
+通过控制台打印输出，我们可以看出：
+- `qualifierWorker` 注入指定名字为 worker4 的 Bean 实例；
+- `workers` 注入了所有类型的 `Worker` Bean 实例；
+- `qualifiedUsers` 注入了标注了 `@Qualifier` 和 `@Group` 所有类型的 `Worker` Bean 实例；
+- `groupWorkers` 注入了标注了 `@Group` 所有类型的 `Worker` Bean 实例；
+
+
+#### `@Qualifier` 的作用
+
+1. 指定注入特定 id 的 Bean（ e.g. `@Qualifier("worker4")` ）;
+2. `@Qualifier` 及其"派生注解"（ e.g. `@Group` ） 可以起到分组作用；
+3. `@Qualifier`以及"派生注解"标注的分组（ e.g. Spring Cloud 的 `@LoadBalanced` ），父元标注包括子元标注；
+
+
+#### `@Qualifier` 是如何指定 Bean 注入
+
+`@Qualifier` 的如何匹配 Bean 实现精确依赖注入的？
+
+详见 `QualifierAnnotationAutowireCandidateResolver # checkQualifier` 源码 ：
+```java
+    /**
+	 * Match the given qualifier annotations against the candidate bean definition.
+     *
+     * @param bdHolder 进行匹配的 {@link BeanDefinitionHolder}
+     * @param annotationsToSearch 被依赖注入的 Bean 的注解
+     * @return 是否匹配
+	 */
+	protected boolean checkQualifiers(BeanDefinitionHolder bdHolder, Annotation[] annotationsToSearch) {
+		if (ObjectUtils.isEmpty(annotationsToSearch)) {
+			return true;
+		}
+		SimpleTypeConverter typeConverter = new SimpleTypeConverter();
+		for (Annotation annotation : annotationsToSearch) {// 被依赖注入的 Bean 的注解
+			Class<? extends Annotation> type = annotation.annotationType();
+			boolean checkMeta = true;
+			boolean fallbackToMeta = false;
+			if (isQualifier(type)) {// 被依赖注入的 Bean 的注解是 @Qualifier 或者 元标注@Qualifier的注解 或者 自定义Qualifier注解
+				if (!checkQualifier(bdHolder, annotation, typeConverter)) {// 是否匹配
+					fallbackToMeta = true;// 不满足匹配，检查注解的元标注
+				}
+				else {
+					checkMeta = false;// 已经匹配，不再需要检查注解的元标注
+				}
+			}
+            // 检查注解的元标注是否满足匹配
+			if (checkMeta) {
+				boolean foundMeta = false;
+				for (Annotation metaAnn : type.getAnnotations()) {
+					Class<? extends Annotation> metaType = metaAnn.annotationType();
+					if (isQualifier(metaType)) {
+						foundMeta = true;
+						// Only accept fallback match if @Qualifier annotation has a value...
+						// Otherwise it is just a marker for a custom qualifier annotation.
+						if ((fallbackToMeta && StringUtils.isEmpty(AnnotationUtils.getValue(metaAnn))) ||
+								!checkQualifier(bdHolder, metaAnn, typeConverter)) {// 是否匹配
+							return false;
+						}
+					}
+				}
+				if (fallbackToMeta && !foundMeta) {// 不满足匹配
+					return false;
+				}
+			}
+		}
+		return true;// 匹配
+	}
+
+
+    /**
+	 * Match the given qualifier annotation against the candidate bean definition.
+	 */
+	protected boolean checkQualifier(
+			BeanDefinitionHolder bdHolder, Annotation annotation, TypeConverter typeConverter) {
+
+		Class<? extends Annotation> type = annotation.annotationType();
+		RootBeanDefinition bd = (RootBeanDefinition) bdHolder.getBeanDefinition();
+
+        // BeanDefinition 是否有指定的依赖注入候选Qualifier，可通过 {@link AbstractBeanDefinition#addQualifier} 注册
+		AutowireCandidateQualifier qualifier = bd.getQualifier(type.getName());
+		if (qualifier == null) {
+			qualifier = bd.getQualifier(ClassUtils.getShortName(type));
+		}
+		if (qualifier == null) {
+			// 首先，获取 BeanDefinition 此类型的注解
+			Annotation targetAnnotation = getQualifiedElementAnnotation(bd, type);
+			// 找不到，然后，找工厂方法此类型的注解
+			if (targetAnnotation == null) {
+				targetAnnotation = getFactoryMethodAnnotation(bd, type);
+			}
+            // 找不到，然后，找 RootBeanDefinition 此类型的注解
+			if (targetAnnotation == null) {
+				RootBeanDefinition dbd = getResolvedDecoratedDefinition(bd);
+				if (dbd != null) {
+					targetAnnotation = getFactoryMethodAnnotation(dbd, type);
+				}
+			}
+            // 找不到，找目标类此类型的注解
+			if (targetAnnotation == null) {
+				// Look for matching annotation on the target class
+				if (getBeanFactory() != null) {
+					try {
+						Class<?> beanType = getBeanFactory().getType(bdHolder.getBeanName());
+						if (beanType != null) {
+							targetAnnotation = AnnotationUtils.getAnnotation(ClassUtils.getUserClass(beanType), type);
+						}
+					}
+					catch (NoSuchBeanDefinitionException ex) {
+						// Not the usual case - simply forget about the type check...
+					}
+				}
+				if (targetAnnotation == null && bd.hasBeanClass()) {
+					targetAnnotation = AnnotationUtils.getAnnotation(ClassUtils.getUserClass(bd.getBeanClass()), type);
+				}
+			}
+            // 找到后，注解是否相等，相等则代表匹配
+			if (targetAnnotation != null && targetAnnotation.equals(annotation)) {
+				return true;
+			}
+		}
+
+        // 注解不相等，则获取注解的属性，属性是否指定 Bean
+		Map<String, Object> attributes = AnnotationUtils.getAnnotationAttributes(annotation);
+		if (attributes.isEmpty() && qualifier == null) {
+			// If no attributes, the qualifier must be present
+			return false;
+		}
+		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+			String attributeName = entry.getKey();// 被依赖注入的 Bean 的属性键值
+			Object expectedValue = entry.getValue();// 被依赖注入的 Bean 的期待值
+			Object actualValue = null;// 进行匹配 Bean 对应属性键的值
+			// 检查依赖注入候选Qualifier的期待值
+			if (qualifier != null) {
+				actualValue = qualifier.getAttribute(attributeName);
+			}
+			if (actualValue == null) {
+				// Fall back on bean definition attribute
+				actualValue = bd.getAttribute(attributeName);
+			}
+            // 进行匹配 Bean 的名称是否匹配
+			if (actualValue == null && attributeName.equals(AutowireCandidateQualifier.VALUE_KEY) &&
+					expectedValue instanceof String && bdHolder.matchesName((String) expectedValue)) {
+				// Fall back on bean name (or alias) match
+				continue;
+			}
+			if (actualValue == null && qualifier != null) {
+				// Fall back on default, but only if the qualifier is present
+				actualValue = AnnotationUtils.getDefaultValue(annotation, attributeName);
+			}
+			if (actualValue != null) {
+				actualValue = typeConverter.convertIfNecessary(actualValue, expectedValue.getClass());
+			}
+			if (!expectedValue.equals(actualValue)) {
+				return false;
+			}
+		}
+		return true;
+	}
 ```
 
 
@@ -681,31 +867,89 @@ public @interface Group {
 <br>
 <hr>
 
+### 依赖注入过程
+
+处理入口：`DefaultListableBeanFactory#resolveDependency`
+
+
 ### `@Autowired` 注入原理
 
-
-
-<br>
-<hr>
-
-### Java 通用注解注入原理
-
-CommonAnnotationBeanPostProcessor
-
+- 处理器：`AutowiredAnnotationBeanPostProcessor`
+    - 通过 `AnnotationConfigUtils#registerAnnotationConfigProcessors` 注册
+- 注入类型
+    - 非静态字段
+    - 非静态方法
+    - 构造器
 
 <br>
 <hr>
 
-### `@Inject` 注入原理
+### Java 通用注解注入原理（JSR250）
 
-
+- 处理器：`CommonAnnotationBeanPostProcessor`
+    - 通过 `AnnotationConfigUtils#registerAnnotationConfigProcessors` 注册
+- 注入注解：
+    - javax.xml.ws.WebServiceRef
+    - javax.ejb.EJB
+    - javax.annotation.Resource
+- 生命周期注解：
+    - javax.annotation.PostConstruct
+    - javax.annotation.PreDestroy
 
 <br>
 <hr>
 
-### 自定义依赖注入
+### `@Inject` 注入原理（JSR330）
 
+- 处理器：`AutowiredAnnotationBeanPostProcessor`
+    - 通过 `AnnotationConfigUtils#registerAnnotationConfigProcessors` 注册
 
+<br>
+<hr>
+
+### 自定义注解驱动的依赖注入
+
+可基于 `AutowiredAnnotationBeanPostProcessor` 实现
+
+```java
+/**
+     * 自定义方式一：
+     * 覆盖 {@link AutowiredAnnotationBeanPostProcessor} 注册
+     *
+     * @see AnnotationConfigUtils#registerAnnotationConfigProcessors
+     */
+    @Bean(name = AnnotationConfigUtils.AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)
+    public static AutowiredAnnotationBeanPostProcessor beanPostProcessor() {
+        AutowiredAnnotationBeanPostProcessor beanPostProcessor = new AutowiredAnnotationBeanPostProcessor();
+
+        // @Autowired + @Inject +  新注解 @CustomInject
+        Set<Class<? extends Annotation>> autowiredAnnotationTypes =
+                new LinkedHashSet<>(Arrays.asList(Autowired.class, Inject.class, CustomInject.class));
+        
+        beanPostProcessor.setAutowiredAnnotationTypes(autowiredAnnotationTypes);
+
+        return beanPostProcessor;
+    }
+```
+
+<br>
+
+```java
+    /**
+     * 自定义方式二：
+     *
+     * 自定义注解驱动
+     */
+    @Bean
+    @Order(Ordered.LOWEST_PRECEDENCE - 3)
+    @Scope
+    public static AutowiredAnnotationBeanPostProcessor beanPostProcessor() {
+        AutowiredAnnotationBeanPostProcessor beanPostProcessor = new AutowiredAnnotationBeanPostProcessor();
+        beanPostProcessor.setAutowiredAnnotationType(CustomInject.class);
+        return beanPostProcessor;
+    }
+
+```
 
 <br>
 <hr>
