@@ -713,24 +713,21 @@ demo.groupWorkers = [Worker{id='5', name='jackhance', age=30, hash=2110756088}, 
 				boolean foundMeta = false;
 				for (Annotation metaAnn : type.getAnnotations()) {
 					Class<? extends Annotation> metaType = metaAnn.annotationType();
-					if (isQualifier(metaType)) {
+					if (isQualifier(metaType)) {// 注解的元标注是 @Qualifier 或者 元标注@Qualifier的注解 或者 自定义Qualifier注解
 						foundMeta = true;
-						// Only accept fallback match if @Qualifier annotation has a value...
-						// Otherwise it is just a marker for a custom qualifier annotation.
-						if ((fallbackToMeta && StringUtils.isEmpty(AnnotationUtils.getValue(metaAnn))) ||
-								!checkQualifier(bdHolder, metaAnn, typeConverter)) {// 是否匹配
+						if ((fallbackToMeta && StringUtils.isEmpty(AnnotationUtils.getValue(metaAnn))) ||// 检查注解的元标注，拥有 value 值的 @Qualifier 的匹配
+								!checkQualifier(bdHolder, metaAnn, typeConverter)) {// 是否匹配 value 值
 							return false;
 						}
 					}
 				}
-				if (fallbackToMeta && !foundMeta) {// 不满足匹配
+				if (fallbackToMeta && !foundMeta) {// 注解的元标注找不到 Qualifier，不满足匹配
 					return false;
 				}
 			}
 		}
 		return true;// 匹配
 	}
-
 
     /**
 	 * Match the given qualifier annotation against the candidate bean definition.
@@ -749,11 +746,11 @@ demo.groupWorkers = [Worker{id='5', name='jackhance', age=30, hash=2110756088}, 
 		if (qualifier == null) {
 			// 首先，获取 BeanDefinition 此类型的注解
 			Annotation targetAnnotation = getQualifiedElementAnnotation(bd, type);
-			// 找不到，然后，找工厂方法此类型的注解
+			// 找不到，然后找工厂方法此类型的注解
 			if (targetAnnotation == null) {
 				targetAnnotation = getFactoryMethodAnnotation(bd, type);
 			}
-            // 找不到，然后，找 RootBeanDefinition 此类型的注解
+            // 找不到，然后找 RootBeanDefinition 此类型的注解
 			if (targetAnnotation == null) {
 				RootBeanDefinition dbd = getResolvedDecoratedDefinition(bd);
 				if (dbd != null) {
@@ -778,13 +775,13 @@ demo.groupWorkers = [Worker{id='5', name='jackhance', age=30, hash=2110756088}, 
 					targetAnnotation = AnnotationUtils.getAnnotation(ClassUtils.getUserClass(bd.getBeanClass()), type);
 				}
 			}
-            // 找到后，注解是否相等，相等则代表匹配
+            // 若 bdHolder 持有的 BeanDefinition 的注解一样，返回匹配
 			if (targetAnnotation != null && targetAnnotation.equals(annotation)) {
 				return true;
 			}
 		}
 
-        // 注解不相等，则获取注解的属性，属性是否指定 Bean
+        // 注解不一致，则获取注解的属性，属性是否匹配
 		Map<String, Object> attributes = AnnotationUtils.getAnnotationAttributes(annotation);
 		if (attributes.isEmpty() && qualifier == null) {
 			// If no attributes, the qualifier must be present
@@ -802,7 +799,7 @@ demo.groupWorkers = [Worker{id='5', name='jackhance', age=30, hash=2110756088}, 
 				// Fall back on bean definition attribute
 				actualValue = bd.getAttribute(attributeName);
 			}
-            // 进行匹配 Bean 的名称是否匹配
+            // 特殊处理值为 #{value} 的 attributeName ，Bean 的名称是否匹配 @Qualifier("beanName") 里面的 #{beanName}
 			if (actualValue == null && attributeName.equals(AutowireCandidateQualifier.VALUE_KEY) &&
 					expectedValue instanceof String && bdHolder.matchesName((String) expectedValue)) {
 				// Fall back on bean name (or alias) match
@@ -812,15 +809,33 @@ demo.groupWorkers = [Worker{id='5', name='jackhance', age=30, hash=2110756088}, 
 				// Fall back on default, but only if the qualifier is present
 				actualValue = AnnotationUtils.getDefaultValue(annotation, attributeName);
 			}
+            // actualValue 类型转换
 			if (actualValue != null) {
 				actualValue = typeConverter.convertIfNecessary(actualValue, expectedValue.getClass());
 			}
+            // actualValue 是否匹配 被依赖注入的 Bean 的期待值
 			if (!expectedValue.equals(actualValue)) {
 				return false;
 			}
 		}
 		return true;
 	}
+
+/*
+* <pre>
+*    逻辑分析：
+*
+*    约定：
+*        Q：@Qualifier 或者 元标注@Qualifier的注解 或者 自定义Qualifier注解
+*        match：注解equals 或者 注解的全部 attribute 值都匹配
+*    
+*    若被依赖的 Bean 不存在注解 Q ？ 若被依赖的 Bean 注解的元标注不存在注解 Q ？ BeanDefinition 匹配
+*                                                                        ： 若被依赖的 Bean 注解的元标注 match ？ BeanDefinition 匹配 ： BeanDefinition 不匹配
+*                                : 若被依赖的 Bean 注解 match ? BeanDefinition 匹配
+*                                                        : 若被依赖的 Bean 注解的元标注不存在注解 Q ？ BeanDefinition 不匹配
+*                                                                                                ： 若被依赖的 Bean 注解的元标注 match ？ BeanDefinition 匹配 ： BeanDefinition 不匹配
+* </pre>
+*/
 ```
 
 
