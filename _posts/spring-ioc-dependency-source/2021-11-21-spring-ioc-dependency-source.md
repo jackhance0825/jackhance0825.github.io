@@ -14,7 +14,7 @@ description: Spring Ioc 依赖来源详解
 |  BeanDefinition              |    是                              |    是                           |    是               | 依赖查找、依赖注入    |
 | 单体对象（Singleton）         |    是                              |    否                           |    否               | 依赖查找、依赖注入    |
 | Resolvable Dependency        |    否                              |    否                           |    否               | 依赖注入             |
-| 外部化配置（e.g. properties） |    否                              |    否                           |    否               | e.g. `@Value` `@PropertySource` `@PropertySources`|
+| 外部化配置（e.g. properties） |    否                              |    否                           |    是               | `@Value`|
 
 
 <hr/>
@@ -163,6 +163,9 @@ public class ExternalSourceDemo {
     @Value("${usr.age:1}")
     private int age;
 
+    @Value("#{2 * 3 + 5}")
+    private int num;
+
     @Value("${usr.resource}")
     private Resource resource;
 
@@ -171,6 +174,9 @@ public class ExternalSourceDemo {
      */
     @Value("${usr.location:广州}")
     private String location;
+
+    @Value("${usr.version:#{100 * 3}}")
+    private int version;
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
@@ -185,8 +191,10 @@ public class ExternalSourceDemo {
 
         System.out.println("name : " + demo.name);
         System.out.println("age : " + demo.age);
+        System.out.println("num : " + demo.num);
         System.out.println("resource : " + demo.resource);
         System.out.println("location : " + demo.location);
+        System.out.println("version : " + demo.version);
 
         // 关闭应用上下文
         applicationContext.close();
