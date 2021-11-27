@@ -308,10 +308,6 @@ public class IndexController {
 <br>
 <hr>
 
-### 小记
-
-<small id="xsd-id-ref"><sup>[[1]](#xsd-id)</sup> <a href="https://github.com/spring-projects/spring-framework/blob/3.0.x/org.springframework.beans/src/main/resources/org/springframework/beans/factory/xml/spring-beans-3.0.xsd" target="_blank" > xsd-ID 声明 </a></small> 
-
 ### 代码
 
 <a href="https://github.com/jackhance0825/thinking-in-spring-5.2.16/tree/main/bean-scope" target="_blank" > 本篇章代码 </a>
