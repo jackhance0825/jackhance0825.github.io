@@ -168,7 +168,7 @@ protected RootBeanDefinition getMergedBeanDefinition(
 
 			if (mbd == null || mbd.stale) {
 				previous = mbd;
-				if (bd.getParentName() == null) {// 没有 parent
+				if (bd.getParentName() == null) {// 没有 parent ， 直接封装当前 BeanDefinition 为 RootBeanDefinition
 					// Use copy of given root bean definition.
 					if (bd instanceof RootBeanDefinition) {
 						mbd = ((RootBeanDefinition) bd).cloneBeanDefinition();
@@ -177,7 +177,7 @@ protected RootBeanDefinition getMergedBeanDefinition(
 						mbd = new RootBeanDefinition(bd);
 					}
 				}
-				else {// 存在 parent
+				else {// 存在 parent ，查找并合并  parent 的 RootBeanDefinition 生成当前 beanName 的 RootBeanDefinition
 					// Child bean definition: needs to be merged with parent.
 					BeanDefinition pbd;
 					try {
@@ -201,9 +201,9 @@ protected RootBeanDefinition getMergedBeanDefinition(
 						throw new BeanDefinitionStoreException(bd.getResourceDescription(), beanName,
 								"Could not resolve parent bean definition '" + bd.getParentName() + "'", ex);
 					}
-					// Deep copy with overridden values.
+					// 深拷贝，子属性覆盖父属性
 					mbd = new RootBeanDefinition(pbd);
-					mbd.overrideFrom(bd);// 子属性覆盖父属性
+					mbd.overrideFrom(bd);
 				}
 
 				// 省略部分代码...
