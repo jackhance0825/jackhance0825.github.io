@@ -1097,4 +1097,4 @@ JVM GC 垃圾回收 Bean 实例。
 
 ### 代码
 
-<a href="https://github.com/jackhance0825/thinking-in-spring-5.2.16/tree/main/bean-life-cycle" target="_blank" > 本篇章代码 </a>
+<a href="https://github.com/jackhance0825/thinking-in-spring-5.2.16/tree/main/bean-lifecycle" target="_blank" > 本篇章代码 </a>
